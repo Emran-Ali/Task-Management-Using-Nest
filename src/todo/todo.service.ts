@@ -1,15 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TodoService {
-  create(createTodoDto: CreateTodoDto) {
-    return 'This action adds a new todo';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createTodoDto: CreateTodoDto, user: any) {
+    try {
+      createTodoDto.userId = user.id;
+      return this.prisma.todo.create({ data: createTodoDto });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   findAll() {
-    return `This action returns all todo`;
+    return `This action returns all todos`;
   }
 
   findOne(id: number) {
@@ -17,10 +25,17 @@ export class TodoService {
   }
 
   update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+    try {
+      return this.prisma.todo.update({
+        data: updateTodoDto,
+        where: { id: id },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   remove(id: number) {
-    return `This action removes a #${id} todo`;
+    return this.prisma.todo.delete({ where: { id: id } });
   }
 }

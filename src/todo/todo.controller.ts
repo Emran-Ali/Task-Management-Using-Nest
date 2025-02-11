@@ -6,22 +6,27 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todoService.create(createTodoDto);
+  create(@Body(ValidationPipe) createTodoDto: CreateTodoDto, @Request() req) {
+    return this.todoService.create(createTodoDto, req.user);
   }
 
   @Get()
-  findAll() {
+  findAll(@Request() req) {
     return this.todoService.findAll();
   }
 

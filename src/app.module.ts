@@ -5,9 +5,10 @@ import { TodoModule } from './todo/todo.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TodoModule, ConfigModule.forRoot(), UserModule, PrismaModule],
+  imports: [TodoModule, ConfigModule.forRoot(), UserModule, PrismaModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
