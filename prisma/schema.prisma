@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  name     String
-  password String
-  Todo     Todo[]
+  id                Int                 @id @default(autoincrement())
+  email             String              @unique
+  name              String
+  password          String
+  Todo              Todo[]
+  UserHasPermission UserHasPermission[]
 }
 
 model Todo {
@@ -27,4 +28,13 @@ model Todo {
   details String
   author  User?  @relation(fields: [userId], references: [id])
   userId  Int
+}
+
+model UserHasPermission {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  author User? @relation(fields: [userId], references: [id])
+
+  permission String
 }

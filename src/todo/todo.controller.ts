@@ -14,8 +14,10 @@ import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Permission } from '../decorators/permission.decorator';
+import { PermissionGuard } from '../gurds/permission.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionGuard)
 @Controller('todos')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
@@ -27,21 +29,26 @@ export class TodoController {
 
   @Get()
   findAll(@Request() req) {
-    return this.todoService.findAll();
+    return this.todoService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todoService.findOne(+id);
+  @Permission('read-todos')
+  findOne(@Param('id') id: string, @Request() req) {
+    return this.todoService.findOne(+id, req.user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todoService.update(+id, updateTodoDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateTodoDto: UpdateTodoDto,
+    @Request() req,
+  ) {
+    return this.todoService.update(+id, updateTodoDto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todoService.remove(+id);
+  remove(@Param('id') id: string, @Request() req) {
+    return this.todoService.remove(+id, req.user);
   }
 }
