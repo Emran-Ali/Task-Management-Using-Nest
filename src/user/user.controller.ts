@@ -7,10 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionGuard } from '../guards/permission.guard';
+import { Permission } from '../decorators/permission.decorator';
 
 @Controller('users')
 export class UserController {
@@ -22,13 +26,16 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permission('read-users')
   findAll() {
-    return this.userService.findAll({});
+    return 'Find users';
+    // return this.userService.findAll({});
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.userService.findOne(id);
   }
 
   @Patch(':id')

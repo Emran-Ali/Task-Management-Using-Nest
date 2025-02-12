@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -13,12 +13,30 @@ export class TodoService {
       createTodoDto.userId = user.id;
       return this.prisma.todo.create({ data: createTodoDto });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      console.log(error?.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Can not create Task, please try again',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   findAll(user: User) {
-    return this.prisma.todo.findMany({ where: { userId: user.id } });
+    try {
+      return this.prisma.todo.findMany({ where: { userId: user.id } });
+    } catch (error) {
+      console.log(error?.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong, could not find Task',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   findOne(id: number, user: User) {
@@ -26,8 +44,15 @@ export class TodoService {
       return this.prisma.todo.findFirstOrThrow({
         where: { id: id, userId: user.id },
       });
-    } catch (e) {
-      throw new InternalServerErrorException(e);
+    } catch (error) {
+      console.log(error?.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Can not find Task, please try again',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -38,11 +63,29 @@ export class TodoService {
         where: { id: id, userId: user.id },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      console.log(error?.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Can not update Task, please try again',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   remove(id: number, user: User) {
-    return this.prisma.todo.delete({ where: { id: id, userId: user.id } });
+    try {
+      return this.prisma.todo.delete({ where: { id: id, userId: user.id } });
+    } catch (error) {
+      console.log(error?.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Can not delete Task, please try again',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

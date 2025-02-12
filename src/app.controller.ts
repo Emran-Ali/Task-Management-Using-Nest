@@ -10,11 +10,4 @@ export class AppController {
     console.log('Hello World!');
     return this.appService.getHello();
   }
-
-  @Post()
-  @HttpCode(201)
-  createUser(@Req() request: Request, @Body('task') body: string) {
-    console.log(body, 'Request Body');
-    return this.appService.newMethod(body);
-  }
 }

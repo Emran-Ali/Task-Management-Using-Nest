@@ -15,10 +15,10 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Permission } from '../decorators/permission.decorator';
-import { PermissionGuard } from '../gurds/permission.guard';
+import { PermissionGuard } from '../guards/permission.guard';
 
 @UseGuards(JwtAuthGuard, PermissionGuard)
-@Controller('todos')
+@Controller('tasks')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
@@ -34,8 +34,8 @@ export class TodoController {
 
   @Get(':id')
   @Permission('read-todos')
-  findOne(@Param('id') id: string, @Request() req) {
-    return this.todoService.findOne(+id, req.user);
+  findOne(@Param('id') id: number, @Request() req) {
+    return this.todoService.findOne(id, req.user);
   }
 
   @Patch(':id')
@@ -48,7 +48,7 @@ export class TodoController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req) {
-    return this.todoService.remove(+id, req.user);
+  remove(@Param('id') id: number, @Request() req) {
+    return this.todoService.remove(id, req.user);
   }
 }
