@@ -42,7 +42,7 @@ export class TodoService {
   findOne(id: number, user: User) {
     try {
       return this.prisma.todo.findFirstOrThrow({
-        where: { id: id, userId: user.id },
+        where: { id: id },
       });
     } catch (error) {
       console.log(error?.message);

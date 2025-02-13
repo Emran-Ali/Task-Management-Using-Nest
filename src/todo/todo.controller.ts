@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -34,21 +35,22 @@ export class TodoController {
 
   @Get(':id')
   @Permission('read-todos')
-  findOne(@Param('id') id: number, @Request() req) {
+  findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    console.log(id, 'ID From Controller');
     return this.todoService.findOne(id, req.user);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateTodoDto: UpdateTodoDto,
     @Request() req,
   ) {
-    return this.todoService.update(+id, updateTodoDto, req.user);
+    return this.todoService.update(id, updateTodoDto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number, @Request() req) {
+  remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return this.todoService.remove(id, req.user);
   }
 }

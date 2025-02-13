@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../interface/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -23,17 +24,41 @@ export class AuthService {
     }
   }
 
-  private async validateUser(email: string, password: string) {
+  private async validateUser(
+    email: string,
+    password: string,
+  ): Promise<User | null> {
     const user = await this.prisma.user.findFirst({
       where: { email: email },
+      include: {
+        UserHasPermission: {
+          select: {
+            permission: true,
+          },
+        },
+        UserHasRole: {
+          select: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (user) {
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (isValidPassword) {
-        const { password, ...result } = user;
-        console.log(result, 'User Registered');
-        return result;
+        const roles = user.UserHasRole.map((role) => role.role);
+        const permissions = user.UserHasPermission.map(
+          (permission) => permission.permission,
+        );
+        const { id, email, name, ...result } = user;
+        return {
+          id,
+          email,
+          name,
+          roles,
+          permissions,
+        };
       }
     }
     return null;

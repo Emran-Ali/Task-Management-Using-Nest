@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { RolePermissionDto } from './dto/role-permission.dto';
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,25 @@ export class UserService {
     try {
       createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
       return await this.prisma.user.create({
-        data: createUserDto,
+        data: {
+          email: createUserDto.email,
+          name: createUserDto.name,
+          password: createUserDto.password,
+          UserHasRole: {
+            create: [
+              {
+                role: 'USER',
+              },
+            ],
+          },
+          UserHasPermission: {
+            create: [
+              {
+                permission: 'read-task',
+              },
+            ],
+          },
+        },
         select: {
           id: true,
           email: true,
@@ -120,6 +139,46 @@ export class UserService {
       }
       await this.prisma.user.delete({ where: { id: id } });
       return { message: 'User successfully deleted.' };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async syncRolePermission(id: number, rolePermission: RolePermissionDto) {
+    try {
+      const user = await this.prisma.user.findFirst({ where: { id: id } });
+      if (!user) {
+        throw new HttpException('User does not exists.', HttpStatus.NOT_FOUND);
+      }
+      const roles = rolePermission?.roles?.map((role) => {
+        return { role: role, userId: id };
+      });
+      const permissions = rolePermission?.permissions?.map((permission) => {
+        return { permission: permission, userId: id };
+      });
+      const permission = permissions
+        ? await this.prisma.userHasPermission.createMany({
+            data: permissions,
+            skipDuplicates: true,
+          })
+        : [];
+      const role = roles
+        ? await this.prisma.userHasRole.createMany({
+            data: roles,
+            skipDuplicates: true,
+          })
+        : [];
+
+      return { permission, role };
     } catch (error) {
       throw new HttpException(
         {
