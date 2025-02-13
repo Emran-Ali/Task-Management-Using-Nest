@@ -24,23 +24,26 @@ export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
+  @Permission('create-task')
   create(@Body(ValidationPipe) createTodoDto: CreateTodoDto, @Request() req) {
     return this.todoService.create(createTodoDto, req.user);
   }
 
   @Get()
+  @Permission('read-tasks')
   findAll(@Request() req) {
     return this.todoService.findAll(req.user);
   }
 
   @Get(':id')
-  @Permission('read-todos')
+  @Permission('read-tasks')
   findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
     console.log(id, 'ID From Controller');
     return this.todoService.findOne(id, req.user);
   }
 
   @Patch(':id')
+  @Permission('update-task')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTodoDto: UpdateTodoDto,
@@ -50,6 +53,7 @@ export class TodoController {
   }
 
   @Delete(':id')
+  @Permission('delete-task')
   remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
     return this.todoService.remove(id, req.user);
   }

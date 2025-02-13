@@ -21,17 +21,19 @@ model User {
   Todo              Todo[]
   UserHasPermission UserHasPermission[]
   UserHasRole       UserHasRole[]
+  AssignTask        AssignTask[]
 }
 
 model Todo {
-  id        Int      @id @default(autoincrement())
-  name      String
-  details   String
-  status    Status   @default(PENDING)
-  author    User?    @relation(fields: [userId], references: [id])
-  userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int          @id @default(autoincrement())
+  name       String
+  details    String
+  status     Status       @default(PENDING)
+  author     User?        @relation(fields: [userId], references: [id])
+  userId     Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  AssignTask AssignTask[]
 }
 
 enum Status {
@@ -50,7 +52,7 @@ model UserHasRole {
   id     Int  @id @default(autoincrement())
   role   Role @default(USER)
   userId Int
-  author User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   @@unique([userId, role])
 }
@@ -59,9 +61,22 @@ model UserHasPermission {
   id Int @id @default(autoincrement())
 
   userId Int
-  author User? @relation(fields: [userId], references: [id])
+  user   User? @relation(fields: [userId], references: [id])
 
   permission String
 
   @@unique([userId, permission])
+}
+
+model AssignTask {
+  id     Int  @id @default(autoincrement())
+  todoId Int  @unique
+  todo   Todo @relation(fields: [todoId], references: [id])
+
+  assignUser Int
+  user       User @relation(fields: [assignUser], references: [id])
+
+  time     String
+  startAt  DateTime
+  createAt DateTime @default(now())
 }

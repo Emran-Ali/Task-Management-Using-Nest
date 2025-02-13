@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { AssignTaskModule } from './assign-task/assign-task.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     TodoModule,
     ConfigModule.forRoot(),
+    AssignTaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
