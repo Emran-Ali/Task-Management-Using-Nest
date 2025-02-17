@@ -1,7 +1,18 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AssignTaskService } from './assign-task.service';
 import { PermissionGuard } from '../guards/permission.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AssignTaskDto } from './dto/assignTask.dto';
 
 @Controller('assign-task')
 @UseGuards(JwtAuthGuard, PermissionGuard)
@@ -11,5 +22,12 @@ export class AssignTaskController {
   @Get()
   getTasks(@Req() req) {
     return this.assignTaskService.getAssignTask(req.user);
+  }
+  @Post(':id')
+  assignTask(
+    @Body(ValidationPipe) assignTaskDto: AssignTaskDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.assignTaskService.assignUserTask(id, assignTaskDto);
   }
 }

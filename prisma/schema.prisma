@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["strictUndefinedChecks"]
 }
 
 datasource db {
@@ -73,10 +74,10 @@ model AssignTask {
   todoId Int  @unique
   todo   Todo @relation(fields: [todoId], references: [id])
 
-  assignUser Int
-  user       User @relation(fields: [assignUser], references: [id])
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 
-  time     String
-  startAt  DateTime
-  createAt DateTime @default(now())
+  time     String?
+  startAt  DateTime?
+  createAt DateTime  @default(now())
 }
