@@ -37,9 +37,8 @@ export class TodoController {
 
   @Get(':id')
   @Permission('read-tasks')
-  findOne(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    console.log(id, 'ID From Controller');
-    return this.todoService.findOne(id, req.user);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.todoService.findOne(id);
   }
 
   @Patch(':id')

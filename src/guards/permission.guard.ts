@@ -18,7 +18,6 @@ export class PermissionGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     const isAdmin = user.roles?.includes('ADMIN');
-    console.log(isAdmin, 'is admin', user, 'User from Permission Guard');
     return (
       isAdmin ||
       requiredPermissions.some((permission) =>
