@@ -13,7 +13,9 @@ import { AssignTaskService } from './assign-task.service';
 import { PermissionGuard } from '../guards/permission.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AssignTaskDto } from './dto/assignTask.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('assign-task')
 @Controller('assign-task')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class AssignTaskController {

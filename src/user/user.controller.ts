@@ -18,7 +18,9 @@ import { PermissionGuard } from '../guards/permission.guard';
 import { Permission } from '../decorators/permission.decorator';
 import { Public } from 'src/guards/public.guard';
 import { RolePermissionDto } from './dto/role-permission.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class UserController {

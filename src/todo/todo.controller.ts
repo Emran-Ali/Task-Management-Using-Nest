@@ -17,7 +17,10 @@ import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Permission } from '../decorators/permission.decorator';
 import { PermissionGuard } from '../guards/permission.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('tasks')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @Controller('tasks')
 export class TodoController {

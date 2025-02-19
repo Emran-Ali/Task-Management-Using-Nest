@@ -8,10 +8,12 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Task Management')
     .setDescription('The task management API Documentation')
-    .setVersion('1.0')
+    .setVersion('1.0.0')
     .addTag('Task Manages')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
