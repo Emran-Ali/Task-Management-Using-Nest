@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AssignTaskModule } from './assign-task/assign-task.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { StreamModule } from './stream/stream.module';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -36,6 +37,7 @@ import * as redisStore from 'cache-manager-ioredis';
         };
       },
     }),
+    StreamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

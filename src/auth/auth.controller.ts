@@ -1,4 +1,4 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Req, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
@@ -8,12 +8,12 @@ export class AuthController {
 
   @Post('/login')
   login(@Body(ValidationPipe) credential: LoginDto) {
-    console.log(credential, 'credential');
     return this.authService.loginUser(credential);
   }
 
   @Post('/logout')
-  logout() {
-    return this.authService.logoutUser();
+  logout(@Req() req: any) {
+    const token: string = req.headers.authorization?.split(' ')[1];
+    return this.authService.logoutUser(token);
   }
 }

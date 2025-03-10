@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permission.decorator';
+import any = jasmine.any;
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -17,7 +18,7 @@ export class PermissionGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
 
-    const isAdmin = user.roles?.includes('ADMIN');
+    const isAdmin = user?.roles?.includes('ADMIN');
     return (
       isAdmin ||
       requiredPermissions.some((permission) =>

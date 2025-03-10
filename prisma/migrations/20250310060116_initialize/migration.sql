@@ -45,8 +45,29 @@ CREATE TABLE "UserHasPermission" (
     CONSTRAINT "UserHasPermission_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "AssignTask" (
+    "id" SERIAL NOT NULL,
+    "todoId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "time" TEXT,
+    "startAt" TIMESTAMP(3),
+    "createAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AssignTask_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserHasRole_userId_role_key" ON "UserHasRole"("userId", "role");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserHasPermission_userId_permission_key" ON "UserHasPermission"("userId", "permission");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AssignTask_todoId_key" ON "AssignTask"("todoId");
 
 -- AddForeignKey
 ALTER TABLE "Todo" ADD CONSTRAINT "Todo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -56,3 +77,9 @@ ALTER TABLE "UserHasRole" ADD CONSTRAINT "UserHasRole_userId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "UserHasPermission" ADD CONSTRAINT "UserHasPermission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AssignTask" ADD CONSTRAINT "AssignTask_todoId_fkey" FOREIGN KEY ("todoId") REFERENCES "Todo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AssignTask" ADD CONSTRAINT "AssignTask_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

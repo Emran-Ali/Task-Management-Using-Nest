@@ -13,29 +13,6 @@ export class TodoService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async onModuleInit() {
-    console.log('Cache Manager Type:', {
-      store: this.cacheManager['store'],
-      stores: this.cacheManager['stores'],
-      isRedis: !!(this.cacheManager['store']?.name === 'redis'),
-    });
-
-    try {
-      await this.cacheManager.set('test-key', 'test-value');
-      const testValue = await this.cacheManager.get('test-key');
-      console.log('Cache Test Result:', {
-        setValue: 'test-value',
-        getValue: testValue,
-        success: testValue === 'test-value',
-      });
-
-      // If using Redis, this will show in redis-cli
-      console.log('Check redis-cli for key: "test-key"');
-    } catch (error) {
-      console.error('Cache Test Error:', error);
-    }
-  }
-
   async findOne(id: number) {
     const cacheKey = `todo:${id}`;
 
